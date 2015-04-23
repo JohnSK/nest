@@ -1,0 +1,215 @@
+﻿<!doctype html>
+<html lang="us">
+<head>
+	<meta charset="utf-8">
+	<title>Aston Nest</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link href="css/bootstrap.min.css" rel="stylesheet">
+	<link href="css/_app.css" rel="stylesheet">
+	<link href="css/ui-lightness/jquery-ui.min.css" rel="stylesheet">
+	<script src="js/jquery-1.10.2.js"></script>
+	<script src="js/jquery-ui.min.js"></script>
+	<script src="js/bootstrap.min.js"></script>
+	<script type="text/javascript" src="js/knockout-3.3.0.js"></script>
+</head>
+<body>
+	<a href="#" id="close-screen">Zatvoriť</a>
+	<h2>Nastavenia miestnosti <small class="room-name"></small></h2>
+	<div class="settings">
+		<form>
+			<div class="pull-left">
+			<div style="width: 100%; text-align: center; padding-right: 2em;">
+				<img style="height: 50px;" src="http://icons.iconarchive.com/icons/hopstarter/superhero-avatar/256/Avengers-Captain-America-icon.png" data-bind="attr: {src: roomLogo}">
+			</div>	
+			<label style="clear:both" style="clear:both">
+				<a id="update-room-logo" class="file-upload button">
+					<input id="update-room-logo-input" name="file" class="file-upload-input" type="file" accept="image/*">
+					Zmeň logo
+				</a>
+			</label>
+		</div>
+		<div class="pull-left">
+			<div style="width: 100%; text-align: center; padding-right: 2em;">
+				<img style="height: 50px;" src="http://icons.iconarchive.com/icons/hopstarter/superhero-avatar/256/Avengers-Captain-America-icon.png" data-bind="attr: {src: roomBackground}">
+			</div>	
+			<label style="clear:both">
+				<a id="update-room-background" class="file-upload button">
+					<input id="update-room-background-input" class="file-upload-input" name="file" type="file" accept="image/*">
+					Zmeň pozadie
+				</a>
+			</label>
+		</div>
+			<label>Názov
+				<input data-bind="value: roomName" type="text" name="" id="room-name-input" class="room-name" value="">
+			</label>
+			<label>Adresa
+				<input data-bind="value: roomPath" type="text" name="" id="room-path-input" class="room-path" value="">
+			</label>
+			<label>Popis
+				<input data-bind="value: roomDescription" type="text" name="" id="room-description-input" class="room-description" value="">
+			</label>
+		</form>
+	</div>
+	<table class="users">
+		<thead>
+			<th class="col-md-1"></th>
+			<th>Meno</th>
+			<th class="col-md-2">Opravnenia v miestnosti</th>
+		</thead>
+		<tbody data-bind="foreach: roomUsers">
+			<tr>
+				<td><img width="50" src="http://icons.iconarchive.com/icons/hopstarter/superhero-avatar/256/Avengers-Captain-America-icon.png" data-bind="attr: {src: avatarImg}"></td>
+				<td data-bind="text: nick"></td>
+				<td>
+					<select class="form-control" data-bind="value: access, disable: withGroup">
+						<option value="">none</option>
+						<option value="read">read</option>
+						<option value="edit">edit</option>
+						<option value="manage">manage</option>		
+					</select>
+				</td>
+			</tr>
+		</tbody>
+	</table>
+	<script type="text/javascript">
+		window.location.contextPath = window.location.pathname.substring(0, window.location.pathname.indexOf('/', 1));
+		$.urlParam = function(sParam){
+			 var sPageURL = window.location.search.substring(1);
+			    var sURLVariables = sPageURL.split('&');
+			    for (var i = 0; i < sURLVariables.length; i++) 
+			    {
+			        var sParameterName = sURLVariables[i].split('=');
+			        if (sParameterName[0] == sParam) 
+			        {
+			            return sParameterName[1];
+			        }
+			    }
+		};
+
+
+	    function RoomModel(){
+	    	var self = this;
+	    	this.id = $.urlParam("id");
+	    	this.roomName = ko.observable("");
+	    	this.roomPath = ko.observable("");
+	    	this.roomDescription = ko.observable("");
+	    	this.roomLogo = ko.observable("");
+	    	this.roomBackground = ko.observable("");
+	    	this.roomUsers = ko.observableArray();
+	    	$.post(window.location.contextPath + "/admin/select-all-rooms", function(data){
+				for (var i = 0; i < data.length; i++) {
+					if(data[i].id == self.id) {
+						self.roomName(data[i].name);
+						self.roomPath(data[i].path);
+						self.roomDescription(data[i].description);
+						self.roomLogo(window.location.contextPath + data[i].logoImg);
+						self.roomBackground(window.location.contextPath + data[i].backgroundImg);
+					};
+				};
+			});
+
+			$.post(window.location.contextPath + "/manage/select-users-by-room", {roomId:self.id}, function(roomUsers){
+				for (var i = 0; i < roomUsers.length; i++) {
+					if (!roomUsers[i].access) {
+						roomUsers[i].access = "";
+					};
+					if (roomUsers[i].withGroup == undefined) {
+						roomUsers[i].withGroup = false;
+					};	
+					if (!roomUsers[i].avatarImg) {
+						roomUsers[i].avatarImg = "http://icons.iconarchive.com/icons/hopstarter/superhero-avatar/256/Avengers-Captain-America-icon.png";
+					} else {
+						roomUsers[i].avatarImg = window.location.contextPath + roomUsers[i].avatarImg;
+					}
+					roomUsers[i].access = ko.observable(roomUsers[i].access);	
+					roomUsers[i].watch = ko.computed(function(){
+						var access = this.access();
+						data = {roomId: self.id, userId: this.id};
+						if(access != "") {
+							data.access = access;
+							$.post(window.location.contextPath + "/manage/update-room-user-access", data, function(){
+								console.log("user updated");		
+							});
+						} else {
+							$.post(window.location.contextPath + "/manage/delete-room-user", data, function(){
+								console.log("user deleted");		
+							});
+						};
+						
+					},roomUsers[i]);			
+					self.roomUsers.push(roomUsers[i]);
+				};
+			});
+
+			this.roomInfoWatch = ko.computed(function(){
+				$.post(window.location.contextPath + "/manage/update-room", {id: self.id, name: this.roomName, path: this.roomPath, description: this.roomDescription}, function(){
+					console.log("room updated");
+				});
+			},this);        
+
+			this.roomLogoWatch = ko.computed(function(){
+				//
+			},this);  
+
+			this.roomBackgroundWatch = ko.computed(function(){
+				//
+			},this);  
+	    };
+	    ko.applyBindings(new RoomModel());
+
+			function updateLogo(file, id) {
+				xhr = new XMLHttpRequest();		
+				xhr.onreadystatechange = function(ev){
+					 if (xhr.readyState==4 && xhr.status==200){
+					 	alert("Obrázok bol uložený");
+					 	window.location.reload();
+					 }
+				};
+				var url = window.location.contextPath + "/manage/update-logo-img";
+				xhr.open('POST', url, true);
+				var data = new FormData();
+				data.append("roomId",id);
+				data.append("name",file.name);
+				data.append('img', file);
+				xhr.send(data);
+			};
+
+
+			function updateBackground(file, id) {
+				xhr = new XMLHttpRequest();		
+				xhr.onreadystatechange = function(ev){
+					 if (xhr.readyState==4 && xhr.status==200){
+					 	alert("Obrázok bol uložený");
+					 	window.location.reload();
+					 }
+				};
+				var url = window.location.contextPath + "/manage/update-background-img";
+				xhr.open('POST', url, true);
+				var data = new FormData();
+				data.append("roomId",id);
+				data.append("name",file.name);
+				data.append('img', file);
+				xhr.send(data);
+			};
+
+
+	    $(document).ready(function(){
+    		$("#update-room-logo-input").change(function(event) {
+				var files = $(this).prop("files");
+				if(files.length > 0) {
+					updateLogo(files[0],$.urlParam("id"));
+				};
+			});
+
+			$("#update-room-background-input").change(function(event) {
+				var files = $(this).prop("files");
+				if(files.length > 0) {
+					updateBackground(files[0],$.urlParam("id"));
+				};
+			});
+
+			$("#close-screen").attr("href","index.html?id=" + $.urlParam("id") );
+	    });
+	</script>
+</body>
+</html>

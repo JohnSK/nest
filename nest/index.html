@@ -1,0 +1,161 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Sociálna sieť</title>
+
+    <!-- Bootstrap -->
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+	<style>
+		textarea {
+			resize: none;
+		}
+	</style>
+	
+  </head>
+  <body>
+  
+<nav class="navbar navbar-inverse">
+  <div class="container-fluid">
+    <div class="navbar-header">
+		<h2><a class="navbar-text" href="#">Sociálna sieť</a></h2>
+    </div>
+	<p class="navbar-text navbar-right">Prihlásený ako: <a href="#" class="navbar-link nick">User</a></p>
+  </div>
+</nav>
+  
+<div class="row">
+	
+	<div class="col-md-2">
+	<div class="row">
+		<div class="col-md-2"></div>
+		
+		<div class="col-md-10">
+		
+			<ul id="room_list" class="nav nav-pills nav-stacked">
+				<li role="presentation" class="active"><a href="#">Roomka<span class="badge">2</span></a></li>
+				<li role="presentation"><a href="#">Nova miestnost<span class="badge">0</span></a></li>
+				<li role="presentation"><a href="#">Nova miestnost2<span class="badge">42</span></a></li>
+			</ul>
+	  
+		</div>
+		</div>
+	</div>
+	
+	<div class="col-md-5">
+	  
+		<!-- PRIDAVANIE PRISPEVKU -->
+		<div id="add_post">
+			<div class="row">
+				
+				<div class="panel panel-default">
+				<div class="panel-body">
+				
+					<div class="col-md-2">
+						<img src="profile.png" alt="obrazok" class="img-rounded" height="100px" width="100px">
+					</div>
+					
+					<div class="col-md-10">
+						<div class="">
+						<!-- <input type="text" class="form-control input-lg" placeholder="Zverejni príspevok" style="height:100px;"> 
+						<input type="text" class="form-control input-md" placeholder="Post something">-->
+						
+						<textarea id="add_post_text" rows="4" cols="90" placeholder="Zverejni príspevok"></textarea>
+							 
+						</div>
+						<button type="button" id="add_post_button" class="btn btn-default" onClick="addPost()" aria-label="Left Align">Odošli</button>
+						
+					</div>
+					
+				</div>
+				</div>
+			  
+			</div>
+		</div>
+		
+		<!-- FEED -->
+		<div id="feed">
+			<!-- POST -->
+			<div class="row feed_post">	
+				
+				<div class="panel panel-default">
+				<div class="panel-body">
+					<!-- Avatar -->
+					<div class="col-md-2">
+						<img src="profile.png" alt="obrazok" class="img-rounded avatar" height="100px" width="100px">
+					</div>
+					<!-- Obsah -->
+					<div class="col-md-10">
+						<div class="col-md-12">
+						
+						<div class="panel panel-default">
+							
+							<div class="panel-heading">
+								<h4 class="post_owner">Ján Kanás</h4>
+								
+								<div class="post_modified"></div>
+							</div>
+							<div class="panel-body">
+
+								<p class="post_text">
+								Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse pretium tellus lacus, eu elementum nisl pulvinar a. Praesent id risus ac neque porta bibendum. Donec ligula mauris, luctus eu blandit sed, tincidunt posuere ipsum. 
+								</p>
+							
+								<img src="#" alt="" class="post_image" height="100%" width="100%">
+							</div>
+							<div class="panel-footer">
+								<!-- Like -->
+								<button type="button" class="btn btn-default post_like_button" aria-label="Left Align">
+									<span class="glyphicon glyphicon-heart" aria-hidden="true">
+									<span class="badge post_likes">9</span>
+									</span>
+								</button>
+								
+								<!-- Komentár -->
+								<textarea class="add_coment_text" rows="1" cols="50" placeholder="Zverejni komentár"></textarea>
+								<button type="button" class="btn btn-default post_comment_button" aria-label="Left Align">
+									<span class="glyphicon glyphicon-comment" aria-hidden="true">
+									<span class="badge post_comments">1</span>
+									</span>
+								</button>
+								
+							</div>
+				
+						</div>
+						
+						<div class="row post_comment col-md-12">
+							
+						</div>
+						
+						</div>
+					</div>
+				</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="col-md-5">
+		
+	</div>
+	
+</div>
+	
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+    <!-- Include all compiled plugins (below), or include individual files as needed -->
+    <script src="js/bootstrap.min.js"></script>
+	
+	<script src="js/javascript.js"></script>
+
+  </body>
+</html>
